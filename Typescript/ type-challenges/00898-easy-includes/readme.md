@@ -1,0 +1,13 @@
+<!--info-header-start-->
+<h1>
+  Includes
+</h1>
+<!--info-header-end-->
+
+Implement the JavaScript Array.includes function in the type system. A type takes the two arguments. The output should be a boolean true or false.
+
+For example
+```ts
+type isPillarMen = Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Dio'> // expected to be `false`
+```
+
