@@ -4,7 +4,7 @@
 </h1>
 <!--info-header-end-->
 
->questions: JavaScript有哪些数据类型，它们的区别？
+>JavaScript有哪些数据类型，它们的区别？
 
 **基本数据类型：**
 Undefined、Null、Boolean、Number、String、Object、Symbol、BigInt。
