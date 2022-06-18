@@ -97,7 +97,31 @@ typeof、instanceof、constructor、Object.prototype.toString.call
 
   ({}) instanceof Object                    // true 
 ```
-![原型链](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/2/24/1691fc878b9beefa~tplv-t2oaga2asx-zoom-in-crop-mark:1304:0:0:0.awebp)
+![原型链图式例](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/2/24/1691fc878b9beefa~tplv-t2oaga2asx-zoom-in-crop-mark:1304:0:0:0.awebp)
+
+*实现instanceof*
+```js
+  function myInstanceof(left, right) {
+    if (!right) {
+      throw Error('right miss')
+    }
+
+    // 获取对象的原型链
+    let current = Object.getPrototypeOf(left)
+    // 获取构造函数的 prototype 对象
+    let prototype = right.prototype; 
+  
+    // 判断构造函数的 prototype 对象是否在对象的原型链上
+    while (true) {
+      if (!current) return false;
+
+      if (current === prototype) return true;
+
+      // 如果没有找到，就继续从其原型上找，Object.getPrototypeOf方法用来获取指定对象的原型
+      current = Object.getPrototypeOf(current);
+    }
+  }
+```
 ---
 
 **constructor**
