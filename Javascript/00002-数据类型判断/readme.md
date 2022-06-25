@@ -24,7 +24,7 @@ typeof、instanceof、constructor、Object.prototype.toString.call
   typeof {}            // object
   typeof null          // object
 ```
-**为什么typeof null === ‘object’?**
+**Q：为什么typeof null === ‘object’?**
   >在javascript中，数据类型都是使用二进制表示的，而javascript会把二进制前三位都为0的数据判断为object类型，而null的二进制表示全都是0，自然前三位也是0，所以执行typeof时会返回 “object”。
   [原文](https://2ality.com/2013/10/typeof-null.html)
   
@@ -99,7 +99,7 @@ typeof、instanceof、constructor、Object.prototype.toString.call
 ```
 ![原型链图式例](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/2/24/1691fc878b9beefa~tplv-t2oaga2asx-zoom-in-crop-mark:1304:0:0:0.awebp)
 
-*实现instanceof*
+*Q：实现简单instanceof*
 ```js
   function myInstanceof(left, right) {
     if (!right) {
