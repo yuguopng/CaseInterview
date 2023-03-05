@@ -1,3 +1,76 @@
+// [[Resolve]](promise2, x)
+/**
+ * promise 解析函数 
+ * @param promise 下一个 Promise（当前 then 返回的 新Promise）
+ * @param x 当前 Promise resolve ｜ reject 的值
+ */
+const onResolvePromise = (promise, x, resolve, reject) => {
+  // https://promisesaplus.com/#point-48
+  if (promise === x) {
+    throw new TypeError('promise and x refer to the same object')
+  }
+
+  if (x instanceof MyPromise) {
+    // https://promisesaplus.com/#point-49
+    x.then(v => {
+      onResolvePromise(promise, v, resolve, reject)
+    }, reject)
+  } else if (x !== null && (typeof x === 'object' || typeof x === 'function')) {
+    // https://promisesaplus.com/#point-53
+    let then
+
+    try {
+      then = x.then
+    } catch (e) {
+      // https://promisesaplus.com/#point-55
+      reject(e)
+    }
+
+    if (typeof then === 'function') {
+      // https://promisesaplus.com/#point-59
+      let hasCalled = false
+
+      try {
+        // https://promisesaplus.com/#point-56
+        then.call(
+          x,
+          (y) => {
+            // https://promisesaplus.com/#point-59
+            if (hasCalled) return
+            hasCalled = true
+
+            // https://promisesaplus.com/#point-57
+            onResolvePromise(promise, y, resolve, reject)
+          },
+          (e) => {
+            // https://promisesaplus.com/#point-59
+            if (hasCalled) return
+            hasCalled = true
+
+            // https://promisesaplus.com/#point-58
+            reject(e)
+          }
+        )
+      } catch (e) {
+        // https://promisesaplus.com/#point-60
+
+        // https://promisesaplus.com/#point-61
+        if (hasCalled) return
+        hasCalled = true
+
+        // https://promisesaplus.com/#point-62
+        reject(e)
+      }
+    } else {
+      // https://promisesaplus.com/#point-63
+      resolve(x)
+    }
+  } else {
+    // https://promisesaplus.com/#point-64
+    resolve(x)
+  }
+}
+
 class MyPromise<T = unknown> {
   static PENDING: "pending" = "pending";
   static FULFILLED: "fulfilled" = "fulfilled";
@@ -71,80 +144,6 @@ class MyPromise<T = unknown> {
     })
   };
 
-  // [[Resolve]](promise2, x)
-  /**
-   * promise 解析函数 
-   * @param promise 下一个 Promise（当前 then 返回的 新Promise）
-   * @param x 当前 Promise resolve ｜ reject 的值
-   */
-  private onResolvePromise = (promise, x, resolve, reject) => {
-    // https://promisesaplus.com/#point-48
-    if (promise === x) {
-      throw new TypeError('promise and x refer to the same object')
-    }
-
-    if (x instanceof MyPromise) {
-      // https://promisesaplus.com/#point-49
-      x.then(v => {
-        x.onResolvePromise(promise, v, resolve, reject)
-      }, reject)
-      
-    } else if (x !== null && (typeof x === 'object' || typeof x === 'function')) {
-      // https://promisesaplus.com/#point-53
-      let then
-
-      try {
-        then = x.then
-      } catch (e) {
-        // https://promisesaplus.com/#point-55
-        reject(e)
-      }
-
-      if (typeof then === 'function') {
-        // https://promisesaplus.com/#point-59
-        let hasCalled = false
-
-        try {
-          // https://promisesaplus.com/#point-56
-          then.call(
-            x,
-            (y) => {
-              // https://promisesaplus.com/#point-59
-              if (hasCalled) return
-              hasCalled = true
-
-              // https://promisesaplus.com/#point-57
-              this.onResolvePromise(promise, y, resolve, reject)
-            },
-            (e) => {
-              // https://promisesaplus.com/#point-59
-              if (hasCalled) return
-              hasCalled = true
-
-              // https://promisesaplus.com/#point-58
-              reject(e)
-            }
-          )
-        } catch (e) {
-          // https://promisesaplus.com/#point-60
-
-          // https://promisesaplus.com/#point-61
-          if (hasCalled) return
-          hasCalled = true
-
-          // https://promisesaplus.com/#point-62
-          reject(e)
-        }
-      } else {
-        // https://promisesaplus.com/#point-63
-        resolve(x)
-      }
-    } else {
-      // https://promisesaplus.com/#point-64
-      resolve(x)
-    }
-  }
-
   /**
    * then 函数中 关于 resolve 的处理
    * https://promisesaplus.com/#point-41
@@ -173,7 +172,7 @@ class MyPromise<T = unknown> {
         resolve(PromiseResult)
       } else {
         const x = onFulfilled(PromiseResult)
-        this.onResolvePromise(promise2, x, resolve, reject)
+        onResolvePromise(promise2, x, resolve, reject)
       }
     } catch (e) {
       reject(e)
@@ -208,7 +207,7 @@ class MyPromise<T = unknown> {
         reject(PromiseResult)
       } else {
         const x = onRejected(PromiseResult)
-        this.onResolvePromise(promise2, x, resolve, reject)
+        onResolvePromise(promise2, x, resolve, reject)
       }
     } catch (e) {
       reject(e)
@@ -265,9 +264,11 @@ class MyPromise<T = unknown> {
   }
 
   static resolve = (value) => {
-    return new MyPromise((r) => {
-      r(value)
+    const p = new MyPromise((r, j) => {
+      onResolvePromise(p, value, r, j)
     })
+
+    return p
   }
 
   static reject = (reason) => {
