@@ -111,3 +111,6 @@
   var __webpack_exports__ = __webpack_require__("./src/demo.js");
 })();
 ```
+
+####CommonJs模块化解析流程
+![思维导图](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/85cf9ace26ee4696859206bd275052eb~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp?)
