@@ -114,3 +114,9 @@
 
 ####CommonJs模块化解析流程
 ![思维导图](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/85cf9ace26ee4696859206bd275052eb~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp?)
+
+
+#### 模块发展史
+https://segmentfault.com/a/1190000023017398
+https://huangxuan.me/js-module-7day/#/64
+https://juejin.cn/post/6844903576309858318
